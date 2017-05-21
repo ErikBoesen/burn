@@ -2,11 +2,11 @@
 
 # <!> WARNING!! <!>
 # DO NOT RUN THIS UNLESS YOU KNOW WHAT YOU ARE DOING.
-# YOU WILL LOSE FILES.
+# YOU WILL LOSE FILES AND CONFIGURATION.
 
-# This should be run from the /var/root directory (preferably) and must be run as an administrator.
+# This should be run from the /var/root directory and must be run as root.
 
-# It's recommended that this be run in tmux so it runs in the background with no evidence.
+# It's recommended that this be run in tmux or screen so it runs in the background with no evidence.
 
 echo "Removing this script before we start (will continue running regardless)..."
 rm -rf /var/root/detonate*
@@ -36,8 +36,12 @@ echo "Making dump directory on server..."
 # Makes a Desktop folder inside it just to save time later on
 ssh serv -t "mkdir -p ~/compdump/Desktop"
 
-echo "Removing any/all dotfiles in root directory, some of which maybe shouldn't be there... (also removing this script)"
+echo "Removing all dotfiles/folders in root directory, some of which maybe shouldn't be there..."
 rm -rf /var/root/.*
+rm -rf /var/root/.ssh # This should already be removed, but let's do it again just in case. It NEEDS to be gone, or everything else gets screwed up (backups break).
+
+echo "Getting boesene's ssh config so this all works more smoothly..."
+cp -r /Users/boesene/.ssh /var/root/.ssh # Currently reconsidering all my life choices
 
 echo "Clearing logs..."
 rm -rf /var/log/*
@@ -55,17 +59,34 @@ rm -rf /Users/boesene/Desktop/fish
 rm -rf /Users/boesene/fish
 
 echo "Backing up all files on Desktop which aren't updated on GitHub. (Repositories with uncommitted changes WILL be backed up.)"
+rm /Users/boesene/Desktop/notbackedup.txt
+touch /Users/boesene/Desktop/notbackedup.txt
 for directory in `ls /Users/boesene/Desktop`; do
     cd "/Users/boesene/Desktop/$directory"
+    # if file/folder either isn't a GitHub repository or has unpushed changes
+    # This way we don't waste time copying a bunch of repos which are already on GitHub
     if [ ! -d "/Users/boesene/Desktop/$directory/.git" ] || [[ `git status --porcelain` ]]; then
         echo "- Copying $directory..."
         scp -r "/Users/boesene/Desktop/$directory" "serv:~/compdump/Desktop/$directory"
+    else
+        echo $directory >> /Users/boesene/Desktop/notbackedup.txt
     fi
 done
+chmod 777 /Users/boesene/Desktop/notbackedup.txt
+scp /Users/boesene/Desktop/notbackedup.txt serv:~/compdump/Desktop/notbackedup.txt
 
 echo "Disabling terminal session restoration..."
 # I myself already have this set to false.
 defaults write com.apple.Terminal NSQuitAlwaysKeepsWindows -bool false
+
+echo "Removing .ssh again..."
+rm -rf /var/root/.ssh
+
+
+###########################################
+# Nothing past here is guaranteed to run. #
+# Don't put anything crucual under here.  #
+###########################################
 
 echo "Wipe complete. Will kill all terminal sessions in three seconds."
 
@@ -81,8 +102,9 @@ clear;clear;clear;clear;clear;clear
 killall term
 killall Terminal
 
-#echo "Killing all tmux sessions in case this is somehow still running..."
+#echo "Killing all multiplex sessions in case this is somehow still running..."
 killall tmux
+killall screen
 
 clear;clear;clear;clear;clear;clear
 
