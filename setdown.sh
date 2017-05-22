@@ -1,15 +1,19 @@
 #!/bin/bash
 
+# This script will wipe all suspicious material off my GM MacBook.
+# It will copy any important data to the SSH server aliased as "serv", whatever that is.
+# For now it will only work on boesene.
+
 # <!> WARNING!! <!>
 # DO NOT RUN THIS UNLESS YOU KNOW WHAT YOU ARE DOING.
-# YOU WILL LOSE FILES AND CONFIGURATION.
+# YOU MAY LOSE FILES AND CONFIGURATION.
 
 # This should be run from the /var/root directory and must be run as root.
 
 # It's recommended that this be run in tmux or screen so it runs in the background with no evidence.
 
 echo "Removing this script before we start (will continue running regardless)..."
-rm -rf /var/root/detonate*
+rm -rf /var/root/set*
 
 echo "Turning of SSHD for all users, which is off by default and could raise some red flags if noticed..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
@@ -46,11 +50,6 @@ cp -r /Users/boesene/.ssh /var/root/.ssh # Currently reconsidering all my life c
 echo "Clearing logs..."
 rm -rf /var/log/*
 
-echo "Backing up zshrc before removal..."
-scp /Users/boesene/.zshrc serv:~/compdump/.zshrc
-
-echo "Removing .zshrcs..." # So as to not expose the 'elev' alias and give away root access means
-rm /Users/*/.zshrc
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history # root's should have been removed already, but just in case
 
@@ -102,7 +101,7 @@ clear;clear;clear;clear;clear;clear
 killall term
 killall Terminal
 
-#echo "Killing all multiplex sessions in case this is somehow still running..."
+echo "Killing all multiplex sessions in case this is somehow still running..."
 killall tmux
 killall screen
 
