@@ -17,8 +17,8 @@ else
     exit
 fi
 
-echo "[WARNING] Will begin running in 5 seconds! Your data will start disappearing!!"
-sleep 50s
+echo "[WARNING] Will begin running in 5 seconds! Your terminal will be closed and your data will start disappearing!!"
+sleep 5s
 
 echo "Removing this script from boesene's account before we start (will continue running regardless)..."
 rm -rf /Users/boesene/Desktop/setdown*
@@ -68,6 +68,9 @@ rm /Users/*/.*history /var/root/.*history # root's should have been removed alre
 echo "Removing fish if it's downloaded..." # It's usually not, but if it was that could be very bad if found.
 rm -rf /Users/boesene/Desktop/fish
 rm -rf /Users/boesene/fish
+
+echo "Removing boesene's zshrc..."
+rm /Users/boesene/.zshrc
 
 echo "Backing up all files on Desktop which aren't updated on GitHub. (Repositories with uncommitted changes WILL be backed up.)"
 rm /Users/boesene/Desktop/notbackedup.txt
@@ -120,7 +123,7 @@ for i in 3 2 1; do
     sleep 1s
 done
 
-echo "Killing terminal to ease suspicions..."
+echo "Killing terminal again to ease suspicions..."
 
 clear;clear;clear;clear;clear;clear
 
