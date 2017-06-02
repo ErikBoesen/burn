@@ -79,6 +79,10 @@ done
 chmod 777 /Users/boesene/Desktop/notbackedup.txt
 scp /Users/boesene/Desktop/notbackedup.txt serv:~/compdump/Desktop/notbackedup.txt
 
+echo "Removing this script from boesene's account just in case it's there..."
+rm -rf /Users/boesene/Desktop/setdown*
+rm -rf /Users/boesene/setdown*
+
 echo "Disabling terminal session restoration..."
 # I myself already have this set to false.
 defaults write com.apple.Terminal NSQuitAlwaysKeepsWindows -bool false
@@ -89,7 +93,7 @@ rm -rf /var/root/.ssh
 echo "Removing boesene's known_hosts (might contain root)..."
 rm /Users/boesene/.ssh/known_hosts*
 
-echo "Hiding evidence of PS proxying. First, kill SSH to turn off the proxy itself..."
+echo "Hiding evidence of PS proxying and/or Tor use. First, kill SSH to turn off PS proxy..."
 # We do this last so that screwing with the connection won't mess with SCP backups
 killall ssh
 
@@ -97,12 +101,16 @@ echo "Wiping SOCKS proxy settings..."
 networksetup -setsocksfirewallproxy Wi-Fi "" "" # If you watch this in the SysPref GUI, it will actually put a 0 in the port field, but that will not be there next time you look at the GUI.
 networksetup -setsocksfirewallproxystate Wi-Fi off
 
+echo "Uninstalling tor..."
+brew uninstall tor # It takes a while to install, but around one second to remove
+rm /Users/boesene/torrc
+
 ###########################################
 # Nothing past here is guaranteed to run. #
 # Don't put anything crucual under here.  #
 ###########################################
 
-echo "Wipe complete. Will kill all terminal sessions in three seconds."
+echo "Wipedown complete. Will kill all terminal sessions in three seconds."
 
 for i in 3 2 1; do
     echo "$i..."
