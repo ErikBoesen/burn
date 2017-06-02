@@ -13,7 +13,7 @@
 if [ "$TERM" = "screen" ]; then
     echo "Running in screen or tmux. Will continue."
 else
-    echo "Please run this in screen or tmux (tmux is broken on our macs)."
+    echo "Please run this in screen (tmux is broken on our macs)."
     exit
 fi
 
