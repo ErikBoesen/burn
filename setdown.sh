@@ -109,14 +109,14 @@ for i in 3 2 1; do
     sleep 1s
 done
 
-echo "Killing terminal to clear any residual evidence..."
+echo "Killing terminal to ease suspicions..."
 
 clear;clear;clear;clear;clear;clear
 
 killall term
 killall Terminal
 
-echo "Killing all multiplex sessions in case this is somehow still running..."
+echo "Killing all multiplex sessions... thanks for using setdown."
 killall tmux
 killall screen
 
