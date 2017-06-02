@@ -10,7 +10,12 @@
 
 # This should be run from the /var/root directory and must be run as root.
 
-# It's recommended that this be run in tmux or screen so it runs in the background with no evidence.
+if [ "$TERM" = "screen" ]; then
+    echo "Running in screen or tmux. Will continue."
+else
+    echo "Please run this in screen or tmux (tmux is broken on our macs)."
+    exit
+fi
 
 echo "Removing this script before we start (will continue running regardless)..."
 rm -rf /var/root/set*
@@ -81,6 +86,16 @@ defaults write com.apple.Terminal NSQuitAlwaysKeepsWindows -bool false
 echo "Removing .ssh again..."
 rm -rf /var/root/.ssh
 
+echo "Removing boesene's known_hosts (might contain root)..."
+rm /Users/boesene/.ssh/known_hosts*
+
+echo "Hiding evidence of PS proxying. First, kill SSH to turn off the proxy itself..."
+# We do this last so that screwing with the connection won't mess with SCP backups
+killall ssh
+
+echo "Wiping SOCKS proxy settings..."
+networksetup -setsocksfirewallproxy Wi-Fi "" "" # If you watch this in the SysPref GUI, it will actually put a 0 in the port field, but that will not be there next time you look at the GUI.
+networksetup -setsocksfirewallproxystate Wi-Fi off
 
 ###########################################
 # Nothing past here is guaranteed to run. #
