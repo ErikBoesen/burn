@@ -18,7 +18,7 @@ else
 fi
 
 echo "[WARNING] Will begin running in 5 seconds! Your data will start disappearing!!"
-sleep 5s
+sleep 50s
 
 echo "Removing this script from boesene's account before we start (will continue running regardless)..."
 rm -rf /Users/boesene/Desktop/setdown*
