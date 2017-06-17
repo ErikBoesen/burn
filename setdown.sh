@@ -88,6 +88,8 @@ for directory in `ls /Users/boesene/Desktop`; do
 done
 chmod 777 /Users/boesene/Desktop/notbackedup.txt
 scp /Users/boesene/Desktop/notbackedup.txt serv:~/compdump/Desktop/notbackedup.txt
+# A discovery of net would be a disaster, so get rid of that
+rm -rf /Users/boesene/Desktop/net
 
 echo "Disabling terminal session restoration..."
 # I myself already have this set to false.
