@@ -27,17 +27,17 @@ sleep 5s
 echo "Removing this script from user's account before we start..."
 rm -rf $uhm/setdown* /var/root/setdown* &
 
-echo "Removing user's SSH known_hosts..."
-rm $uhm/.ssh/known_hosts*
-
 echo "Removing all dotfiles/folders in root dir, some of which maybe shouldn't be there..."
 rm -rf /var/root/.*
 
 echo "Getting user's ssh config so this all works more smoothly..."
 cp -r $uhm/.ssh /var/root/.ssh
 
+echo "Removing user's SSH known_hosts..."
+rm $uhm/.ssh/known_hosts*
+
 echo "Making dump dir on server..."
-ssh serv -t "mkdir -p ~/dump-$(hostname)"
+ssh serv -o StrictHostKeyChecking=no -t "mkdir -p ~/dump-$(hostname)"
 
 echo "Turning of SSHD for all users..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh &
@@ -79,6 +79,9 @@ networksetup -setsocksfirewallproxystate Wi-Fi off
 
 echo "Clearing logs..."
 rm -rf /var/log/*
+
+echo "Removing root ssh folder"
+rm -rf /var/root/.ssh
 
 wait
 
