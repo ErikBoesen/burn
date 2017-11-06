@@ -11,10 +11,10 @@ function burm(){
     (scp -r $@ serv:dump-$(hostname)/; rm -rf $@) &
 }
 
-if [ "$TERM" = "screen" ]; then
-    echo "Running in screen or tmux. Will continue."
+if [ "$TERM" = "screen" ] && [ $(id -u) = 0 ]; then
+    echo "Running as root in screen or tmux. Will continue."
 else
-    echo "Please run in screen or tmux."
+    echo "Please run as root in screen or tmux."
     exit 1
 fi
 
