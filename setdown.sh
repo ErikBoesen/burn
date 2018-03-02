@@ -7,7 +7,7 @@ set +x
 
 # Backup files over SSH, then remove, given paths
 function burm {
-    (scp -r $@ serv:dump-$(hostname)/; rm -rf $@) &
+    (scp -r $@ serv:dump-$(hostname)/ && rm -rf $@) &
 }
 
 if [ "$TERM" = "screen" ]; then
