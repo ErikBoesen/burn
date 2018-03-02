@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 # This script helps with cleaning up my MacBook. It automatically backs up needed
 # files to my SSH server (aliased as "serv") and removes anything private before
@@ -11,11 +10,6 @@ src=~/src
 # Backup files over SSH, then remove, given paths
 function backup { scp -r $@ $host:dump-$(hostname)/; }
 function burm   { (backup $@ && rm -rf $@) &; }
-
-if ! [ "$TERM" = "screen" ]; then
-    echo "Please run in screen or tmux."
-    exit 1
-fi
 
 echo "Burn beginning in 5 seconds..."
 sleep 5s
