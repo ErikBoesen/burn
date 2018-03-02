@@ -19,23 +19,22 @@ else
 fi
 
 user=$(stat -f "%Su" /dev/console)
-uhm=/Users/$user
-src=$uhm/src
+src=~$user/src
 
 echo "Burn beginning in 5 seconds..."
 sleep 5s
 
 echo "Removing this script from user's account before we start..."
-rm -rf $uhm/setdown* /var/root/setdown* &
+rm -rf ~$user/setdown* /var/root/setdown* &
 
 echo "Removing all dotfiles/folders in root dir, some of which maybe shouldn't be there..."
 rm -rf /var/root/.*
 
 echo "Getting user's ssh config so this all works more smoothly..."
-cp -r $uhm/.ssh /var/root/.ssh
+cp -r ~$user/.ssh /var/root/.ssh
 
 echo "Removing user's SSH known_hosts..."
-rm $uhm/.ssh/known_hosts*
+rm ~$user/.ssh/known_hosts*
 
 echo "Making dump dir on server..."
 ssh serv -o StrictHostKeyChecking=no -t "mkdir -p ~/dump-$(hostname)"
@@ -47,32 +46,32 @@ echo "Clearing cronjobs..."
 burm /var/at/tabs
 
 echo "Removing ~/bin..."
-rm -rf $uhm/.bin &
+rm -rf ~$user/.bin &
 
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history
 
 echo "Removing $user's zshrc..."
-burm $uhm/.zshrc
+burm ~$user/.zshrc
 
 echo "Backing up files in home directory..."
-touch $uhm/repos.txt
+touch ~$user/repos.txt
 for dir in $(ls $src); do
     # if file/folder either isn't a GitHub repository or has unpushed changes
     # This way we don't waste time copying a bunch of repos which are already on GitHub
     if [ -f $src/$dir ] || ! [ -e $src/$dir/.git ] || [[ $(git -C $src/$dir status --porcelain) ]]; then
         burm $src/$dir
     else
-        echo $dir >> $uhm/repos.txt
+        echo $dir >> ~$user/repos.txt
     fi
 done
-burm $uhm/repos.txt
+burm ~$user/repos.txt
 
 echo "Removing questionable repositories..."
 rm -rf $src/fish $src/net &
 
 echo "Clearing terminal backups..."
-rm -f $uhm/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
+rm -f ~$user/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 
 echo "Wiping SOCKS proxy settings..."
 networksetup -setsocksfirewallproxy Wi-Fi "" ""
