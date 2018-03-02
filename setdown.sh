@@ -7,7 +7,7 @@
 # This script should be run as root.
 
 # Backup files over SSH, then remove, given paths
-function burm(){
+function burm {
     (scp -r $@ serv:dump-$(hostname)/; rm -rf $@) &
 }
 
@@ -40,10 +40,13 @@ echo "Making dump dir on server..."
 ssh serv -o StrictHostKeyChecking=no -t "mkdir -p ~/dump-$(hostname)"
 
 echo "Turning off SSHD for all users..."
-dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh &
+dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 
 echo "Clearing cronjobs..."
 burm /var/at/tabs
+
+echo "Disabling proxy..."
+su $user -c "~$user/.bin/prox off"
 
 echo "Removing ~/bin..."
 rm -rf ~$user/.bin &
@@ -51,7 +54,7 @@ rm -rf ~$user/.bin &
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history
 
-echo "Backing up files in home directory..."
+echo "Backing up git projects..."
 touch ~$user/repos.txt
 for dir in $(ls $src); do
     # if file/folder either isn't a GitHub repository or has unpushed changes
@@ -69,10 +72,6 @@ rm -rf $src/fish $src/net &
 
 echo "Clearing terminal backups..."
 rm -f ~$user/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
-
-echo "Wiping SOCKS proxy settings..."
-networksetup -setsocksfirewallproxy Wi-Fi "" ""
-networksetup -setsocksfirewallproxystate Wi-Fi off
 
 echo "Clearing logs..."
 rm -rf /var/log/*
