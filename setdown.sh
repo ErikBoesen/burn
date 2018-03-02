@@ -1,4 +1,5 @@
 #!/bin/bash
+set +x
 
 # This script helps with cleaning up my MacBook. It automatically backs up needed
 # files to my SSH server (aliased as "serv") and removes anything private before
