@@ -4,7 +4,7 @@ host=juno
 src=~/src
 
 function backup { scp -r $@ $host:dump-$(hostname)/; }
-function burm   { (backup $@ && rm -rf $@) & }
+function burm   { (backup $@ && rm -rf $@); }
 
 function countdown {
     clocks=(🔥 🕛 🕚 🕙 🕘 🕗 🕖 🕕 🕔 🕓 🕒 🕑 🕐)
