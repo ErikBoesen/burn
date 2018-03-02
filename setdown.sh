@@ -51,9 +51,6 @@ rm -rf ~$user/.bin &
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history
 
-echo "Removing $user's zshrc..."
-burm ~$user/.zshrc
-
 echo "Backing up files in home directory..."
 touch ~$user/repos.txt
 for dir in $(ls $src); do
