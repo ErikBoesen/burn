@@ -6,9 +6,8 @@ set +x
 # reimaging.
 
 # Backup files over SSH, then remove, given paths
-function burm {
-    (scp -r $@ serv:dump-$(hostname)/ && rm -rf $@) &
-}
+function backup { scp -r $@ serv:dump-$(hostname)/; }
+function burm   { (backup $@ && rm -rf $@) &; }
 
 src=~/src
 
