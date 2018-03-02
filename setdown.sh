@@ -3,7 +3,6 @@
 host=juno
 src=~/src
 
-# Backup files over SSH, then remove, given paths
 function backup { scp -r $@ $host:dump-$(hostname)/; }
 function burm   { (backup $@ && rm -rf $@) &; }
 
@@ -20,7 +19,7 @@ rm -rf /var/root/.*
 EOF
 echo "--- Leaving root ---"
 
-rm -rf ~/setdown*
+rm -rf {/tmp,~,$src}/setdown*
 ssh $host -t "mkdir -p ~/dump-$(hostname)"
 prox off
 rm -rf ~/.bin
