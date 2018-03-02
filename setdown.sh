@@ -10,12 +10,17 @@ function burm {
     (scp -r $@ serv:dump-$(hostname)/ && rm -rf $@) &
 }
 
+src=~/src
+
 if [ "$TERM" = "screen" ]; then
     echo "Running as in screen or tmux. Will continue."
 else
     echo "Please run in screen or tmux."
     exit 1
 fi
+
+echo "Burn beginning in 5 seconds..."
+sleep 5s
 
 ssh root@localhost -t <<EOF
 echo "Turning off SSHD for all users..."
@@ -33,11 +38,6 @@ rm -rf /var/at/tabs
 echo "Removing all dotfiles/folders in root dir..."
 rm -rf /var/root/.*
 EOF
-
-src=~/src
-
-echo "Burn beginning in 5 seconds..."
-sleep 5s
 
 echo "Removing this script..."
 rm -rf ~/setdown* &
