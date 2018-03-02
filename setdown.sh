@@ -33,14 +33,13 @@ echo "Removing all dotfiles/folders in root dir..."
 rm -rf /var/root/.*
 EOF
 
-user=$(stat -f "%Su" /dev/console)
-src=~$user/src
+src=~/src
 
 echo "Burn beginning in 5 seconds..."
 sleep 5s
 
 echo "Removing this script..."
-rm -rf ~$user/setdown* &
+rm -rf ~/setdown* &
 
 echo "Making dump dir on server..."
 ssh serv -t "mkdir -p ~/dump-$(hostname)"
@@ -49,32 +48,32 @@ echo "Disabling proxy..."
 prox off
 
 echo "Removing ~/bin..."
-rm -rf ~$user/.bin &
+rm -rf ~/.bin &
 
 echo "Backing up git projects..."
-touch ~$user/repos.txt
+touch ~/repos.txt
 for dir in $(ls $src); do
     # if file/folder either isn't a GitHub repository or has unpushed changes
     # This way we don't waste time copying a bunch of repos which are already on GitHub
     if [ -f $src/$dir ] || ! [ -e $src/$dir/.git ] || [[ $(git -C $src/$dir status --porcelain) ]]; then
         burm $src/$dir
     else
-        echo $dir >> ~$user/repos.txt
+        echo $dir >> ~/repos.txt
     fi
 done
-burm ~$user/repos.txt
+burm ~/repos.txt
 
 echo "Removing repositories..."
 rm -rf $src/fish $src/net &
 
-echo "Getting rid of all prompt histories..."
-rm ~$user/.*history
+echo "Getting rid of prompt histories..."
+rm ~/.*history
 
 echo "Clearing terminal backups..."
-rm -f ~$user/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
+rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 
 echo "Removing user's SSH known_hosts..."
-rm ~$user/.ssh/known_hosts*
+rm ~/.ssh/known_hosts*
 
 wait
 
