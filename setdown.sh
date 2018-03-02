@@ -20,6 +20,7 @@ fi
 
 user=$(stat -f "%Su" /dev/console)
 uhm=/Users/$user
+src=$uhm/src
 
 echo "Burn beginning in 5 seconds..."
 sleep 5s
@@ -39,14 +40,14 @@ rm $uhm/.ssh/known_hosts*
 echo "Making dump dir on server..."
 ssh serv -o StrictHostKeyChecking=no -t "mkdir -p ~/dump-$(hostname)"
 
-echo "Turning of SSHD for all users..."
+echo "Turning off SSHD for all users..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh &
 
 echo "Clearing cronjobs..."
 burm /var/at/tabs
 
 echo "Removing ~/bin..."
-rm -rf $uhm/bin &
+rm -rf $uhm/.bin &
 
 echo "Getting rid of all prompt histories..."
 rm /Users/*/.*history /var/root/.*history
@@ -56,11 +57,11 @@ burm $uhm/.zshrc
 
 echo "Backing up files in home directory..."
 touch $uhm/repos.txt
-for dir in $(ls $uhm); do
+for dir in $(ls $src); do
     # if file/folder either isn't a GitHub repository or has unpushed changes
     # This way we don't waste time copying a bunch of repos which are already on GitHub
-    if [ -f $uhm/$dir ] || ! [ -e $uhm/$dir/.git ] || [[ $(git -C $uhm/$dir status --porcelain) ]]; then
-        burm $uhm/$dir
+    if [ -f $src/$dir ] || ! [ -e $src/$dir/.git ] || [[ $(git -C $src/$dir status --porcelain) ]]; then
+        burm $src/$dir
     else
         echo $dir >> $uhm/repos.txt
     fi
@@ -68,7 +69,7 @@ done
 burm $uhm/repos.txt
 
 echo "Removing questionable repositories..."
-rm -rf $uhm/fish $uhm/net &
+rm -rf $src/fish $src/net &
 
 echo "Clearing terminal backups..."
 rm -f $uhm/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
@@ -80,7 +81,7 @@ networksetup -setsocksfirewallproxystate Wi-Fi off
 echo "Clearing logs..."
 rm -rf /var/log/*
 
-echo "Removing root ssh folder"
+echo "Removing root ssh folder..."
 rm -rf /var/root/.ssh
 
 wait
