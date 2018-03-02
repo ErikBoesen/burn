@@ -4,19 +4,34 @@
 # files to my SSH server (aliased as "serv") and removes anything private before
 # reimaging.
 
-# This script should be run as root.
-
 # Backup files over SSH, then remove, given paths
 function burm {
     (scp -r $@ serv:dump-$(hostname)/; rm -rf $@) &
 }
 
-if [ "$TERM" = "screen" ] && [ $(id -u) = 0 ]; then
-    echo "Running as root in screen or tmux. Will continue."
+if [ "$TERM" = "screen" ]; then
+    echo "Running as in screen or tmux. Will continue."
 else
-    echo "Please run as root in screen or tmux."
+    echo "Please run in screen or tmux."
     exit 1
 fi
+
+ssh root@localhost -t <<EOF
+echo "Turning off SSHD for all users..."
+dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
+
+echo "Clearing logs..."
+rm -rf /var/log/*
+
+echo "Removing root ssh folder..."
+rm -rf /var/root/.ssh
+
+echo "Clearing crontabs..."
+rm -rf /var/at/tabs
+
+echo "Removing all dotfiles/folders in root dir..."
+rm -rf /var/root/.*
+EOF
 
 user=$(stat -f "%Su" /dev/console)
 src=~$user/src
@@ -24,35 +39,17 @@ src=~$user/src
 echo "Burn beginning in 5 seconds..."
 sleep 5s
 
-echo "Removing this script from user's account before we start..."
-rm -rf ~$user/setdown* /var/root/setdown* &
-
-echo "Removing all dotfiles/folders in root dir, some of which maybe shouldn't be there..."
-rm -rf /var/root/.*
-
-echo "Getting user's ssh config so this all works more smoothly..."
-cp -r ~$user/.ssh /var/root/.ssh
-
-echo "Removing user's SSH known_hosts..."
-rm ~$user/.ssh/known_hosts*
+echo "Removing this script..."
+rm -rf ~$user/setdown* &
 
 echo "Making dump dir on server..."
-ssh serv -o StrictHostKeyChecking=no -t "mkdir -p ~/dump-$(hostname)"
-
-echo "Turning off SSHD for all users..."
-dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
-
-echo "Clearing cronjobs..."
-burm /var/at/tabs
+ssh serv -t "mkdir -p ~/dump-$(hostname)"
 
 echo "Disabling proxy..."
-su $user -c "~$user/.bin/prox off"
+prox off
 
 echo "Removing ~/bin..."
 rm -rf ~$user/.bin &
-
-echo "Getting rid of all prompt histories..."
-rm /Users/*/.*history /var/root/.*history
 
 echo "Backing up git projects..."
 touch ~$user/repos.txt
@@ -67,17 +64,17 @@ for dir in $(ls $src); do
 done
 burm ~$user/repos.txt
 
-echo "Removing questionable repositories..."
+echo "Removing repositories..."
 rm -rf $src/fish $src/net &
+
+echo "Getting rid of all prompt histories..."
+rm ~$user/.*history
 
 echo "Clearing terminal backups..."
 rm -f ~$user/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 
-echo "Clearing logs..."
-rm -rf /var/log/*
-
-echo "Removing root ssh folder..."
-rm -rf /var/root/.ssh
+echo "Removing user's SSH known_hosts..."
+rm ~$user/.ssh/known_hosts*
 
 wait
 
