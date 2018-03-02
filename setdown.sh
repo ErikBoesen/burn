@@ -4,7 +4,7 @@ host=juno
 src=~/src
 
 function backup { scp -r $@ $host:dump-$(hostname)/; }
-function burm   { (backup $@ && rm -rf $@); }
+function burm   { backup $@ && rm -rf $@; }
 
 function countdown {
     clocks=(🔥 🕛 🕚 🕙 🕘 🕗 🕖 🕕 🕔 🕓 🕒 🕑 🕐)
@@ -33,17 +33,20 @@ prox off
 rm -rf ~/.bin
 
 echo "Backing up git projects..."
-touch ~/repos.txt
-for dir in $(ls $src); do
-    # if file/folder either isn't a GitHub repository or has unpushed changes
-    # This way we don't waste time copying a bunch of repos which are already on GitHub
-    if [ -f $src/$dir ] || ! [ -e $src/$dir/.git ] || [[ $(git -C $src/$dir status --porcelain) ]]; then
-        backup $src/$dir
-    else
-        echo $dir >> ~/repos.txt
-    fi
+cd $src
+unsaved=()
+for f in *; do
+    # if is a file, isn't a git repository, or has unpushed changes
+    if [ -f $f ] || ! [ -e $f/.git ] || [[ $(git -C $f status --porcelain) ]]; then
+        unsaved+=($f)
+    else echo $f >> /tmp/repos.txt; fi
 done
-burm ~/repos.txt
+echo "Found ${#unsaved[@]} files needing backup. (${unsaved[@]})"
+echo "Compressing..."
+tar -cf /tmp/src.tar ${unsaved[@]}
+echo "Sending to server..."
+burm /tmp/repos.txt /tmp/src.tar
+
 
 rm -rf $src/{fish,net}
 rm ~/.*history
