@@ -4,14 +4,22 @@ host=juno
 src=~/src
 
 function backup { scp -r $@ $host:dump-$(hostname)/; }
-function burm   { (backup $@ && rm -rf $@) &; }
+function burm   { (backup $@ && rm -rf $@) & }
 
-echo "Burn beginning in 5 seconds..."
-sleep 5s
+function countdown {
+    clocks=(🔥 🕛 🕚 🕙 🕘 🕗 🕖 🕕 🕔 🕓 🕒 🕑 🕐)
+    for i in $(seq $1 1); do
+        echo "${clocks[$i]}  // $i..."
+        sleep 1s
+    done
+    echo "${clocks[0]}  // GO!"
+}
+
+echo "[WARNING] Burn in 5 seconds! 🔥"
+countdown 5
 
 echo "--- Entering root ---"
 ssh root@localhost -t <<EOF
-set -x
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 rm -rf /var/log/*
 rm -rf /var/at/tabs
@@ -48,12 +56,9 @@ wait
 # Assume nothing past this message will run. #
 ##############################################
 
-echo "Wipedown complete. Killing terminals."
+echo "Burn complete. Killing terminals..."
 
-for i in 3 2 1; do
-    echo "$i..."
-    sleep 1s
-done
+countdown 3
 
-killall term Terminal ayy i_term iTerm2
-killall tmux screen
+#killall term Terminal ayy i_term iTerm2
+#killall tmux screen
