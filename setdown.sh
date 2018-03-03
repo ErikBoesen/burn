@@ -22,14 +22,14 @@ countdown 5
 
 echo "--- Entering root ---"
 fi
-ssh root@localhost -t <<EOF
+ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
 rm -rf /var/log/*
 echo "* Clearing crontabs..."
 rm -rf /var/at/tabs
 EOF
 if ! $DEBUG; then
-ssh root@localhost -t <<EOF
+ssh root@localhost -T <<EOF
 echo "* Disabling universal SSH..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Removing root dotfiles..."
