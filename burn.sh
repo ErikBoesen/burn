@@ -52,28 +52,28 @@ for f in *; do
         unsaved+=($f)
     else echo $f >> /tmp/repos.txt; fi
 done
-echo "* Found ${#unsaved[@]} files in $src needing backup. (${unsaved[@]})"
-echo "* Compressing..."
+echo "- Found ${#unsaved[@]} files in $src needing backup."
+echo "- Compressing..."
 tar -cf /tmp/src.tar ${unsaved[@]}
-echo "* Sending to server..."
+echo "- Sending to server..."
 burm /tmp/repos.txt /tmp/src.tar
 
 
 echo "* Removing dubious repositories..."
 rm -rf $src/{fish,net}
-echo "* Clearing terminal saves..."
+echo "* Clearing terminal sessions..."
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 if ! $debug; then
     echo "* Removing this script..."
     rm -rf {/tmp,~,$src}/setdown*
     echo "* Clearing prompt histories..."
     rm ~/.*history
-    echo "* Removing SSH known_hosts..."
-    rm ~/.ssh/known_hosts*
-    echo "* Removing ~/.bin..."
-    rm -rf ~/.bin
     echo "* Clearing SOCKS proxy..."
     prox off
+    echo "* Removing ~/.bin..."
+    rm -rf ~/.bin
+    echo "* Removing SSH known_hosts..."
+    rm ~/.ssh/known_hosts*
 fi
 
 echo "* Burn complete. Killing terminals..."
