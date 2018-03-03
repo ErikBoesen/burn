@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🔥  burn.sh 🔥"
-if [ $1 = "--debug" ]; then
+if [ "$1" = "--debug" ]; then
     debug=true
     echo "⚒  (DEBUG) ⚒"
 fi
@@ -23,7 +23,7 @@ function countdown {
 
 countdown 5
 
-echo "--- Entering root ---"
+echo "--- <root> ----"
 ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
 rm -rf /var/log/*
@@ -38,7 +38,7 @@ echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
 EOF
 fi
-echo "--- Leaving root ---"
+echo "--- </root> ---"
 
 echo "* Creating dump directory on server..."
 ssh -o LogLevel=QUIET $host -t "mkdir -p ~/dump-$(hostname)"
