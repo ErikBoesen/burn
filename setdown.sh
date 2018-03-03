@@ -15,24 +15,32 @@ function countdown {
     echo "${clocks[0]}  // GO!"
 }
 
-echo "[WARNING] Burn in 5 seconds! 🔥"
+echo "* Burn in 5 seconds! 🔥"
 countdown 5
 
 echo "--- Entering root ---"
 ssh root@localhost -t <<EOF
+echo "* Disabling universal SSH..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
+echo "* Clearing logs..."
 rm -rf /var/log/*
+echo "* Clearing crontabs..."
 rm -rf /var/at/tabs
+echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
 EOF
 echo "--- Leaving root ---"
 
+echo "* Removing this script..."
 rm -rf {/tmp,~,$src}/setdown*
+echo "* Creating dump directory on server..."
 ssh $host -t "mkdir -p ~/dump-$(hostname)"
+echo "* Clearing SOCKS proxy..."
 prox off
+echo "* Removing ~/.bin..."
 rm -rf ~/.bin
 
-echo "Backing up git projects..."
+echo "* Backing up git projects..."
 cd $src
 unsaved=()
 for f in *; do
@@ -41,25 +49,27 @@ for f in *; do
         unsaved+=($f)
     else echo $f >> /tmp/repos.txt; fi
 done
-echo "Found ${#unsaved[@]} files needing backup. (${unsaved[@]})"
-echo "Compressing..."
+echo "* Found ${#unsaved[@]} files in $src needing backup. (${unsaved[@]})"
+echo "* Compressing..."
 tar -cf /tmp/src.tar ${unsaved[@]}
-echo "Sending to server..."
+echo "* Sending to server..."
 burm /tmp/repos.txt /tmp/src.tar
 
 
+echo "* Removing dubious repositories..."
 rm -rf $src/{fish,net}
+echo "* Clearing prompt histories..."
 rm ~/.*history
+echo "* Clearing terminal saves..."
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
+echo "* Removing SSH known_hosts..."
 rm ~/.ssh/known_hosts*
-
-wait
 
 ##############################################
 # Assume nothing past this message will run. #
 ##############################################
 
-echo "Burn complete. Killing terminals..."
+echo "* Burn complete. Killing terminals..."
 
 countdown 3
 
