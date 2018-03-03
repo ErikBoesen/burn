@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DEBUG=false
+
 host=juno
 src=~/src
 
@@ -19,26 +21,24 @@ echo "* Burn in 5 seconds! 🔥"
 countdown 5
 
 echo "--- Entering root ---"
+fi
 ssh root@localhost -t <<EOF
-echo "* Disabling universal SSH..."
-dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Clearing logs..."
 rm -rf /var/log/*
 echo "* Clearing crontabs..."
 rm -rf /var/at/tabs
+EOF
+if ! $DEBUG; then
+ssh root@localhost -t <<EOF
+echo "* Disabling universal SSH..."
+dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
 EOF
 echo "--- Leaving root ---"
 
-echo "* Removing this script..."
-rm -rf {/tmp,~,$src}/setdown*
 echo "* Creating dump directory on server..."
 ssh $host -t "mkdir -p ~/dump-$(hostname)"
-echo "* Clearing SOCKS proxy..."
-prox off
-echo "* Removing ~/.bin..."
-rm -rf ~/.bin
 
 echo "* Backing up git projects..."
 cd $src
@@ -58,20 +58,26 @@ burm /tmp/repos.txt /tmp/src.tar
 
 echo "* Removing dubious repositories..."
 rm -rf $src/{fish,net}
-echo "* Clearing prompt histories..."
-rm ~/.*history
 echo "* Clearing terminal saves..."
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
-echo "* Removing SSH known_hosts..."
-rm ~/.ssh/known_hosts*
-
-##############################################
-# Assume nothing past this message will run. #
-##############################################
+if ! $DEBUG; then
+    echo "* Removing this script..."
+    rm -rf {/tmp,~,$src}/setdown*
+    echo "* Clearing prompt histories..."
+    rm ~/.*history
+    echo "* Removing SSH known_hosts..."
+    rm ~/.ssh/known_hosts*
+    echo "* Removing ~/.bin..."
+    rm -rf ~/.bin
+    echo "* Clearing SOCKS proxy..."
+    prox off
+fi
 
 echo "* Burn complete. Killing terminals..."
 
 countdown 3
 
-#killall term Terminal ayy i_term iTerm2
-#killall tmux screen
+if ! $DEBUG; then
+    killall term Terminal ayy i_term iTerm2
+    killall tmux screen
+fi
