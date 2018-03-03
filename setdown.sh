@@ -1,6 +1,9 @@
 #!/bin/bash
 
-DEBUG=false
+if [ $1 = "--debug" ]; then
+    debug=true
+    echo "⚒  DEBUG MODE ⚒"
+fi
 
 host=juno
 src=~/src
@@ -11,30 +14,30 @@ function burm   { backup $@ && rm -rf $@; }
 function countdown {
     clocks=(🔥 🕛 🕚 🕙 🕘 🕗 🕖 🕕 🕔 🕓 🕒 🕑 🕐)
     for i in $(seq $1 1); do
-        echo "${clocks[$i]}  // $i..."
+        printf "\r${clocks[$i]}  // $i..."
         sleep 1s
     done
-    echo "${clocks[0]}  // GO!"
+    printf "\r"
 }
 
 echo "* Burn in 5 seconds! 🔥"
 countdown 5
 
 echo "--- Entering root ---"
-fi
 ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
 rm -rf /var/log/*
 echo "* Clearing crontabs..."
 rm -rf /var/at/tabs
 EOF
-if ! $DEBUG; then
+if ! $debug; then
 ssh root@localhost -T <<EOF
 echo "* Disabling universal SSH..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
 EOF
+fi
 echo "--- Leaving root ---"
 
 echo "* Creating dump directory on server..."
@@ -60,7 +63,7 @@ echo "* Removing dubious repositories..."
 rm -rf $src/{fish,net}
 echo "* Clearing terminal saves..."
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
-if ! $DEBUG; then
+if ! $debug; then
     echo "* Removing this script..."
     rm -rf {/tmp,~,$src}/setdown*
     echo "* Clearing prompt histories..."
@@ -77,7 +80,7 @@ echo "* Burn complete. Killing terminals..."
 
 countdown 3
 
-if ! $DEBUG; then
+if ! $debug; then
     killall term Terminal ayy i_term iTerm2
     killall tmux screen
 fi
