@@ -1,8 +1,9 @@
 #!/bin/bash
 
+echo "🔥  burn.sh 🔥"
 if [ $1 = "--debug" ]; then
     debug=true
-    echo "⚒  DEBUG MODE ⚒"
+    echo "⚒  (DEBUG) ⚒"
 fi
 
 host=juno
@@ -20,7 +21,6 @@ function countdown {
     printf "\r"
 }
 
-echo "* Burn in 5 seconds! 🔥"
 countdown 5
 
 echo "--- Entering root ---"
@@ -41,7 +41,7 @@ fi
 echo "--- Leaving root ---"
 
 echo "* Creating dump directory on server..."
-ssh $host -t "mkdir -p ~/dump-$(hostname)"
+ssh -o LogLevel=QUIET $host -t "mkdir -p ~/dump-$(hostname)"
 
 echo "* Backing up git projects..."
 cd $src
