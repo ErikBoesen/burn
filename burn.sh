@@ -12,6 +12,7 @@ src=~/src
 function backup { scp -r $@ $host:dump-$(hostname)/; }
 function burm   { backup $@ && rm -rf $@; }
 
+function task { echo "* $1..."; }
 function countdown {
     clocks=(🔥 🕛 🕚 🕙 🕘 🕗 🕖 🕕 🕔 🕓 🕒 🕑 🕐)
     for i in $(seq $1 1); do
@@ -40,10 +41,10 @@ EOF
 fi
 echo "--- </root> ---"
 
-echo "* Creating dump directory on server..."
+task "Creating dump directory on server..."
 ssh -o LogLevel=QUIET $host -t "mkdir -p ~/dump-$(hostname)"
 
-echo "* Backing up git projects..."
+task "Backing up git projects"
 cd $src
 unsaved=()
 for f in *; do
@@ -59,24 +60,24 @@ echo "- Sending to server..."
 burm /tmp/repos.txt /tmp/src.tar
 
 
-echo "* Removing dubious repositories..."
+task "Removing dubious repositories"
 rm -rf $src/{fish,net}
-echo "* Clearing terminal sessions..."
+task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 if ! $debug; then
-    echo "* Removing this script..."
+    task "Removing this script"
     rm -rf {/tmp,~,$src}/setdown*
-    echo "* Clearing prompt histories..."
+    task "Clearing prompt histories"
     rm ~/.*history
-    echo "* Clearing SOCKS proxy..."
+    task "Clearing SOCKS proxy"
     prox off
-    echo "* Removing ~/.bin..."
+    task "Removing ~/.bin"
     rm -rf ~/.bin
-    echo "* Removing SSH known_hosts..."
+    task "Removing SSH known_hosts"
     rm ~/.ssh/known_hosts*
 fi
 
-echo "* Burn complete. Killing terminals..."
+task "Burn complete. Killing terminals"
 
 countdown 3
 
