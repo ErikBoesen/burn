@@ -64,9 +64,9 @@ task "Removing dubious repositories"
 rm -rf $src/{fish,net}
 task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
+task "Removing burn repository"
+rm -rf ~/burn
 if ! $debug; then
-    task "Removing this script"
-    rm -rf {/tmp,~,$src}/setdown*
     task "Clearing prompt histories"
     rm ~/.*history
     task "Clearing SOCKS proxy"
