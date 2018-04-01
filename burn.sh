@@ -28,11 +28,11 @@ echo "--- <root> ----"
 ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
 rm -rf /var/log/*
-echo "* Clearing crontabs..."
-rm -rf /var/at/tabs
 EOF
 if ! $debug; then
 ssh root@localhost -T <<EOF
+echo "* Clearing crontabs..."
+rm -rf /var/at/tabs
 echo "* Disabling universal SSH..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Removing root dotfiles..."
