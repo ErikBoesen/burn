@@ -59,9 +59,6 @@ tar -cf /tmp/src.tar ${unsaved[@]}
 echo "- Sending to server..."
 burm /tmp/repos.txt /tmp/src.tar
 
-
-task "Removing dubious repositories"
-rm -rf $src/{fish}
 task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 task "Removing burn repository"
