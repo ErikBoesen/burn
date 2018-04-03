@@ -61,7 +61,7 @@ burm /tmp/repos.txt /tmp/src.tar
 
 
 task "Removing dubious repositories"
-rm -rf $src/{fish,net}
+rm -rf $src/{fish}
 task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 task "Removing burn repository"
