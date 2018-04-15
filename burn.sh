@@ -27,7 +27,7 @@ countdown 5
 echo "--- <root> ----"
 ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
-rm -rf /var/log/*
+rm -rf /var/log/* /Library/Logs/*
 EOF
 if ! $debug; then
 ssh root@localhost -T <<EOF
@@ -72,6 +72,8 @@ if ! $debug; then
     rm -rf ~/.bin
     task "Removing SSH known_hosts"
     rm ~/.ssh/known_hosts*
+    task "Clearing local logs"
+    rm -rf ~/Library/Logs/*
 fi
 
 task "Burn complete. Killing terminals"
