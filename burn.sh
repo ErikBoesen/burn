@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🔥  burn.sh 🔥"
-if [ "$1" = "--debug" ]; then
+if [[ "$1" == "--debug" ]]; then
     debug=true
     echo "⚒  (DEBUG) ⚒"
 fi
