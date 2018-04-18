@@ -49,7 +49,7 @@ cd $src
 unsaved=()
 for f in *; do
     # if is a file, isn't a git repository, or has unpushed changes
-    if [ -f $f ] || ! [ -e $f/.git ] || [[ $(git -C $f status --porcelain) ]]; then
+    if [[ -f $f ]] || ! [[ -e $f/.git ]] || [[ $(git -C $f status --porcelain) ]]; then
         unsaved+=($f)
     else git -C $f remote get-url origin >> /tmp/repos.txt; fi
 done
