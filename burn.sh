@@ -14,7 +14,7 @@ fi
 host=juno
 src=~/src
 
-function backup { scp -r $@ $host:dump-$(hostname)/; }
+function backup { scp -o "StrictHostKeyChecking no" -r $@ $host:dump-$(hostname)/; }
 function burm   { backup $@ && rm -rf $@; }
 
 function task { echo "* $1..."; }
