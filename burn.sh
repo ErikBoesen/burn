@@ -75,10 +75,14 @@ if ! $debug; then
     prox off
     task "Removing ~/.bin"
     rm -rf ~/.bin
-    task "Removing SSH known_hosts"
-    rm ~/.ssh/known_hosts*
     task "Clearing local logs"
     rm -rf ~/Library/Logs/*
+fi
+task "Sending log file to server"
+burm $logfile
+if ! $debug; then
+    task "Removing SSH known_hosts"
+    rm ~/.ssh/known_hosts*
 fi
 
 task "Burn complete. Killing terminals"
