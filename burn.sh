@@ -41,7 +41,7 @@ EOF
 fi
 echo "--- </root> ---"
 
-task "Creating dump directory on server..."
+task "Creating dump directory on server"
 ssh -o LogLevel=QUIET $host -t "mkdir -p ~/dump-$(hostname)"
 
 task "Backing up git projects"
