@@ -37,6 +37,8 @@ echo "* Disabling universal SSH..."
 dscl . change /Groups/com.apple.access_ssh-disabled RecordName com.apple.access_ssh-disabled com.apple.access_ssh
 echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
+echo "* Removing $user from sudoers file..."
+sed -i '' '/$user/d' /etc/sudoers
 EOF
 fi
 echo "--- </root> ---"
