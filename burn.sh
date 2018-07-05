@@ -74,7 +74,7 @@ EOF
 fi
 
 task "Clearing terminal sessions"
-rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
+rm -f ~/Library/Saved\ Application\ State/{com.apple.Terminal,com.googlecode.iterm2}.savedState/*
 task "Removing burn repository"
 rm -rf ~/burn
 if [[ $debug != true ]]; then
