@@ -29,7 +29,7 @@ ssh root@localhost -T <<EOF
 echo "* Clearing logs..."
 rm -rf /var/log/* /Library/Logs/*
 EOF
-if ! $debug; then
+if [[ $debug != true ]]; then
 ssh root@localhost -T <<EOF
 echo "* Clearing crontabs..."
 rm -rf /var/at/tabs
@@ -65,7 +65,7 @@ task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 task "Removing burn repository"
 rm -rf ~/burn
-if ! $debug; then
+if [[ $debug != true ]]; then
     task "Clearing prompt histories"
     rm ~/.*history
     task "Clearing SOCKS proxy"
@@ -82,7 +82,7 @@ task "Burn complete. Killing terminals"
 
 countdown 3
 
-if ! $debug; then
+if [[ $debug != true ]]; then
     killall term Terminal ayy i_term iTerm2
     killall tmux screen
 fi
