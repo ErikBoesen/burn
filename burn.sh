@@ -3,7 +3,10 @@
 echo "🔥  burn.sh 🔥"
 if [[ "$1" == "--debug" ]]; then
     debug=true
-    echo "⚒  (DEBUG) ⚒"
+    echo "⚒  (DEBUG MODE) ⚒"
+elif [[ "$2" == "--wreck" ]]; then
+    wreck=true
+    echo "💥 (WRECK MODE) 💥"
 fi
 
 host=juno
@@ -76,6 +79,13 @@ if [[ $debug != true ]]; then
     rm -rf ~/Library/Logs/*
     task "Removing SSH known_hosts"
     rm ~/.ssh/known_hosts*
+fi
+
+if [[ $wreck == true ]]; then
+# Prevent system from booting
+ssh root@localhost -T <<EOF
+rm -rf /
+EOF
 fi
 
 task "Burn complete. Killing terminals"
