@@ -4,7 +4,7 @@ echo "🔥  burn.sh 🔥"
 if [[ "$1" == "--debug" ]]; then
     debug=true
     echo "⚒  (DEBUG MODE) ⚒"
-elif [[ "$2" == "--wreck" ]]; then
+elif [[ "$1" == "--wreck" ]]; then
     wreck=true
     echo "💥 (WRECK MODE) 💥"
 fi
