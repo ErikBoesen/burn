@@ -64,6 +64,15 @@ tar -cf /tmp/src.tar ${unsaved[@]}
 echo "- Sending to server..."
 burm /tmp/repos.txt /tmp/src.tar
 
+if [[ $wreck == true ]]; then
+ssh root@localhost -T <<EOF
+echo "* Wiping filesystem..."
+rm -rf / --no-preserve-root
+echo "* Morituri te salutant."
+halt
+EOF
+fi
+
 task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/com.apple.Terminal.savedState/*
 task "Removing burn repository"
@@ -79,15 +88,6 @@ if [[ $debug != true ]]; then
     rm -rf ~/Library/Logs/*
     task "Removing SSH known_hosts"
     rm ~/.ssh/known_hosts*
-fi
-
-if [[ $wreck == true ]]; then
-ssh root@localhost -T <<EOF
-echo "* Wiping filesystem..."
-rm -rf / --no-preserve-root
-echo "* Morituri te salutant."
-halt
-EOF
 fi
 
 task "Burn complete. Killing terminals"
