@@ -46,6 +46,8 @@ EOF
 fi
 echo "--- </root> ---"
 
+task "Removing burn repository"
+rm -rf ~/burn
 task "Creating dump directory on server"
 ssh -o LogLevel=QUIET $host -t "mkdir -p ~/dump-$(hostname)"
 
@@ -78,8 +80,6 @@ fi
 
 task "Clearing terminal sessions"
 rm -f ~/Library/Saved\ Application\ State/{com.apple.Terminal,com.googlecode.iterm2}.savedState/*
-task "Removing burn repository"
-rm -rf ~/burn
 if [[ $debug != true ]]; then
     task "Clearing prompt histories"
     rm ~/.*history
