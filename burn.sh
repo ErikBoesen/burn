@@ -42,6 +42,10 @@ echo "* Removing root dotfiles..."
 rm -rf /var/root/.*
 echo "* Removing $user from sudoers file..."
 sed -i '' '/$user/d' /etc/sudoers
+# :)
+echo "* Deleting user 'user'..."
+dscl localhost delete /Local/Defaults/Users/user
+rm -rf /Users/user
 EOF
 fi
 echo "--- </root> ---"
